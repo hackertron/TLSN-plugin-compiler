@@ -21,7 +21,7 @@ jobs:
           echo '${{ toJSON(github.event.client_payload) }}' > payload.json
           jq -r '.["config.json"]' payload.json > config.json
           mkdir -p src
-          jq -r '.["index.d.ts"]' payload.json > src/index.d.ts
+          jq -r '.["index.d.ts"]' payload.json | sed 's/\\n/\n/g' > src/index.d.ts
           jq -r '.["index.ts"]' payload.json | sed 's/\\n/\n/g' > src/index.ts
           cat src/index.ts
 
