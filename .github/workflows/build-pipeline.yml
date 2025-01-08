@@ -22,7 +22,8 @@ jobs:
           jq -r '.["config.json"]' payload.json > config.json
           mkdir -p src
           jq -r '.["index.d.ts"]' payload.json > src/index.d.ts
-          jq -r '.["index.ts"]' payload.json > src/index.ts
+          jq -r '.["index.ts"]' payload.json | sed 's/\\n/\n/g' > src/index.ts
+          cat src/index.ts
 
       - name: Install Extism
         run: |
