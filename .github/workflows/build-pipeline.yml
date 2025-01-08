@@ -1,26 +1,17 @@
 name: TLSN Plugin Compiler Pipeline
 
 on:
-  workflow_dispatch:  # Allows manual trigger for testing
-  repository_dispatch:  # Triggered by external POST request
+  workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Show current directory and files (initial)
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Directory structure:"
-          ls -la
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
 
@@ -28,40 +19,21 @@ jobs:
         if: github.event.client_payload != null
         run: |
           echo '${{ toJSON(github.event.client_payload) }}' > payload.json
-          echo '${{ toJSON(github.event.client_payload) }}
-          CONFIG=$(jq -r '.["config.json"]' payload.json)
-          INDEX_D_TS=$(jq -r '.["index.d.ts"]' payload.json)
-          INDEX_TS=$(jq -r '.["index.ts"]' payload.json)
-
-          echo "$CONFIG" > config.json
-          echo "$INDEX_D_TS" > src/index.d.ts
-          echo "$INDEX_TS" > src/index.ts
-
-          echo "Current working directory after replacing files:"
-          pwd
-          echo "Directory structure after replacing files:"
-          ls -la
-          echo "Tree structure after replacing files:"
-          tree .
+          jq -r '.["config.json"]' payload.json > config.json
+          mkdir -p src
+          jq -r '.["index.d.ts"]' payload.json > src/index.d.ts
+          jq -r '.["index.ts"]' payload.json > src/index.ts
 
       - name: Install Extism
         run: |
           curl -O https://raw.githubusercontent.com/extism/js-pdk/main/install.sh
           chmod +x install.sh
           ./install.sh
-          echo "Current working directory after installing Extism:"
-          pwd
-          echo "Directory structure after installing Extism:"
-          ls -la
 
       - name: Install dependencies and build project
         run: |
           npm install
           npm run build
-          echo "Current working directory after build:"
-          pwd
-          echo "Directory structure after build:"
-          ls -la
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
