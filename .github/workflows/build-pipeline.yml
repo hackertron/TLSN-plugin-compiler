@@ -1,0 +1,49 @@
+name: TLSN Plugin Compiler Pipeline
+
+on:
+  workflow_dispatch: # Allows manual trigger for testing
+  repository_dispatch: # Triggered by external POST request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Replace files with incoming payload
+        env:
+          PAYLOAD: ${{ github.event.client_payload }}
+        run: |
+          echo "$PAYLOAD" > payload.json
+          CONFIG=$(jq -r '.["config.json"]' payload.json)
+          INDEX_D_TS=$(jq -r '.["index.d.ts"]' payload.json)
+          INDEX_TS=$(jq -r '.["index.ts"]' payload.json)
+          HF_JS=$(jq -r '.["hf.js"]' payload.json)
+
+          echo "$CONFIG" > config.json
+          echo "$INDEX_D_TS" > src/index.d.ts
+          echo "$INDEX_TS" > src/index.ts
+          echo "$HF_JS" > hf.js
+
+      - name: Install Extism
+        run: |
+          curl -O https://raw.githubusercontent.com/extism/js-pdk/main/install.sh
+          bash install.sh
+
+      - name: Install dependencies and build project
+        run: |
+          npm install
+          npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: wasm-artifact
+          path: ./dist/*.wasm
