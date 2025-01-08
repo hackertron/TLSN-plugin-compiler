@@ -28,8 +28,8 @@ jobs:
           echo "$CONFIG" > config.json
           echo "$INDEX_D_TS" > src/index.d.ts
           echo "$INDEX_TS" > src/index.ts
-          echo ls -al
-          echo pwd
+          ls -al
+          pwd
 
       - name: Install Extism
         run: |
