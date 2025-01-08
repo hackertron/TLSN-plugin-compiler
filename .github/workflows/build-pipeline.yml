@@ -1,8 +1,8 @@
 name: TLSN Plugin Compiler Pipeline
 
 on:
-  workflow_dispatch: # Allows manual trigger for testing
-  repository_dispatch: # Triggered by external POST request
+  workflow_dispatch:  # Allows manual trigger for testing
+  repository_dispatch:  # Triggered by external POST request
 
 jobs:
   build:
@@ -18,10 +18,9 @@ jobs:
           node-version: '18.x'
 
       - name: Replace files with incoming payload
-        env:
-          PAYLOAD: ${{ github.event.client_payload }}
+        if: github.event.client_payload != null
         run: |
-          echo "$PAYLOAD" > payload.json
+          echo '${{ toJSON(github.event.client_payload) }}' > payload.json
           CONFIG=$(jq -r '.["config.json"]' payload.json)
           INDEX_D_TS=$(jq -r '.["index.d.ts"]' payload.json)
           INDEX_TS=$(jq -r '.["index.ts"]' payload.json)
@@ -33,7 +32,8 @@ jobs:
       - name: Install Extism
         run: |
           curl -O https://raw.githubusercontent.com/extism/js-pdk/main/install.sh
-          bash install.sh
+          chmod +x install.sh
+          ./install.sh
 
       - name: Install dependencies and build project
         run: |
