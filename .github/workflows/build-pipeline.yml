@@ -28,6 +28,7 @@ jobs:
         if: github.event.client_payload != null
         run: |
           echo '${{ toJSON(github.event.client_payload) }}' > payload.json
+          echo '${{ toJSON(github.event.client_payload) }}
           CONFIG=$(jq -r '.["config.json"]' payload.json)
           INDEX_D_TS=$(jq -r '.["index.d.ts"]' payload.json)
           INDEX_TS=$(jq -r '.["index.ts"]' payload.json)
