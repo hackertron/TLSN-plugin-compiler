@@ -15,28 +15,16 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: Replace files with incoming payload
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Replace files with incoming payload using Python
         if: github.event.client_payload != null
         run: |
           echo '${{ toJSON(github.event.client_payload) }}' > payload.json
-          
-          # Extract and write index.d.ts
-          jq -r '.["index.d.ts"]' payload.json | sed 's/\\\\n/\n/g' > src/index.d.ts
-          
-          # Extract and write index.ts (with correct quote handling)
-          jq -r '.["index.ts"]' payload.json | sed 's/\\\\n/\n/g' | awk '{print "\"" $0 "\""}' > src/index.ts
-          
-          # Create utils directory if not exists
-          mkdir -p utils
-          
-          
-          # Display the contents for verification
-          echo "Contents of src/index.ts:"
-          cat src/index.ts
-          echo "Contents of src/index.d.ts:"
-          cat src/index.d.ts
-          echo "Contents of utils/hf.js:"
-          cat utils/hf.js
+          python process_payload.py
 
       - name: Install Extism
         run: |
