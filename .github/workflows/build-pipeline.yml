@@ -24,7 +24,15 @@ jobs:
         if: github.event.client_payload != null
         run: |
           echo '${{ github.event.client_payload }}' > payload.json
+          echo "Payload saved to payload.json:"
+          cat payload.json
           python process_payload.py
+
+          echo "Contents of src/index.ts:"
+          cat src/index.ts
+
+          echo "Contents of src/index.d.ts:"
+          cat src/index.d.ts
 
       - name: Install Extism
         run: |
