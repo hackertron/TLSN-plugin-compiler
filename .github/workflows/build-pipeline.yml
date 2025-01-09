@@ -21,10 +21,10 @@ jobs:
           echo '${{ toJSON(github.event.client_payload) }}' > payload.json
           
           # Extract and write index.d.ts
-          jq -r '.["index.d.ts"]' payload.json | sed 's/\\n/\n/g' > src/index.d.ts
+          jq -r '.["index.d.ts"]' payload.json | sed 's/\\n/\n/g' | printf "%s" > src/index.d.ts
           
           # Extract and write index.ts
-          jq -r '.["index.ts"]' payload.json | sed 's/\\n/\n/g' > src/index.ts
+          jq -r '.["index.ts"]' payload.json | sed 's/\\n/\n/g' | printf "%s" > src/index.ts
           
           # Create utils directory if not exists
           mkdir -p utils
