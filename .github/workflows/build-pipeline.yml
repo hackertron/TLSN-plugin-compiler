@@ -23,7 +23,7 @@ jobs:
       - name: Replace files with incoming payload using Python
         if: github.event.client_payload != null
         run: |
-          echo '${{ toJSON(github.event.client_payload) }}' > payload.json
+          echo '${{ github.event.client_payload }}' > payload.json
           python process_payload.py
 
       - name: Install Extism
