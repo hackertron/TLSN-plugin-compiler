@@ -19,11 +19,24 @@ jobs:
         if: github.event.client_payload != null
         run: |
           echo '${{ toJSON(github.event.client_payload) }}' > payload.json
-          jq -r '.["config.json"]' payload.json > config.json
-          mkdir -p src
+          
+          # Extract and write index.d.ts
           jq -r '.["index.d.ts"]' payload.json | sed 's/\\n/\n/g' > src/index.d.ts
+          
+          # Extract and write index.ts
           jq -r '.["index.ts"]' payload.json | sed 's/\\n/\n/g' > src/index.ts
+          
+          # Create utils directory if not exists
+          mkdir -p utils
+          
+          
+          # Display the contents for verification
+          echo "Contents of src/index.ts:"
           cat src/index.ts
+          echo "Contents of src/index.d.ts:"
+          cat src/index.d.ts
+          echo "Contents of utils/hf.js:"
+          cat utils/hf.js
 
       - name: Install Extism
         run: |
