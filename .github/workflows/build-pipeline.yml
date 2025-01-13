@@ -29,6 +29,7 @@ jobs:
         run: |
           # Extract individual payload parts without using toJSON
           echo "${{ github.event.client_payload['config.json'] }}" > config.json
+          cat config.json
           echo "${{ github.event.client_payload['index.d.ts'] }}" > src/index.d.ts
           cat src/index.d.ts
           echo "${{ github.event.client_payload['index.ts'] }}" > src/index.ts
