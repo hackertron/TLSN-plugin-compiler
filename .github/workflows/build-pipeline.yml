@@ -1,49 +1,65 @@
 name: TLSN Plugin Compiler Pipeline
 
 on:
-  workflow_dispatch:
-  repository_dispatch:
+  workflow_dispatch:  # Allows manual trigger for testing
+  repository_dispatch:  # Triggered by external POST request
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      
-      - uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Show current directory and files (initial)
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Directory structure:"
+          ls -la
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18.x'
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Replace files with incoming payload using Python
+      - name: Replace files with incoming payload
         if: github.event.client_payload != null
         run: |
-          echo '${{ toJson(github.event.client_payload) }}' > payload.json
-          echo "Payload saved to payload.json:"
-          cat payload.json
-          python process_payload.py
+          # Extract individual payload parts without using toJSON
+          echo "${{ github.event.client_payload['config.json'] }}" > config.json
+          echo "${{ github.event.client_payload['index.d.ts'] }}" > src/index.d.ts
+          echo "${{ github.event.client_payload['index.ts'] }}" > src/index.ts
+          echo "${{ github.event.client_payload['utils/hf.js'] }}" > utils/hf.js
 
-          echo "Contents of src/index.ts:"
-          cat src/index.ts
-
-          echo "Contents of src/index.d.ts:"
-          cat src/index.d.ts
+          # Show current directory structure after replacing files
+          echo "Current working directory after replacing files:"
+          pwd
+          echo "Directory structure after replacing files:"
+          ls -la
+          echo "Tree structure after replacing files:"
+          sudo apt-get install -y tree
+          tree .
 
       - name: Install Extism
         run: |
           curl -O https://raw.githubusercontent.com/extism/js-pdk/main/install.sh
           chmod +x install.sh
           ./install.sh
+          echo "Current working directory after installing Extism:"
+          pwd
+          echo "Directory structure after installing Extism:"
+          ls -la
 
       - name: Install dependencies and build project
         run: |
           npm install
           npm run build
+          echo "Current working directory after build:"
+          pwd
+          echo "Directory structure after build:"
+          ls -la
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
