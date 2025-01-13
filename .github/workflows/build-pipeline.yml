@@ -28,7 +28,9 @@ jobs:
         if: github.event.client_payload != null
         run: |
           # Extract individual payload parts without using toJSON
-          echo "${{ toJson(github.event.client_payload['config.json']) }}" > config.json
+          # Extract and format config.json properly using jq
+          echo '${{ toJSON(github.event.client_payload['config.json']) }}' | jq '.' > config.json
+          # Show contents of config.json
           cat config.json
           echo "${{ github.event.client_payload['index.d.ts'] }}" > src/index.d.ts
           cat src/index.d.ts
