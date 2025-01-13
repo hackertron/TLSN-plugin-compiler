@@ -1,7 +1,7 @@
 {
-  "name": "twitter_profile",
+  "name": "tlsnotary_website_plugin",
   "version": "1.0.0",
-  "description": "Demo TLSNotary plugin to notarize the ownership of a twitter profile",
+  "description": "WASM TLSNotary plugin to notarize the users website",
   "main": "src/index.ts",
   "scripts": {
     "build": "node esbuild.js"
