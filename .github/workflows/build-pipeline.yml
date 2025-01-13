@@ -30,8 +30,9 @@ jobs:
           # Extract individual payload parts without using toJSON
           echo "${{ github.event.client_payload['config.json'] }}" > config.json
           echo "${{ github.event.client_payload['index.d.ts'] }}" > src/index.d.ts
+          cat src/index.d.ts
           echo "${{ github.event.client_payload['index.ts'] }}" > src/index.ts
-          echo "${{ github.event.client_payload['utils/hf.js'] }}" > utils/hf.js
+          cat src/index.ts
 
           # Show current directory structure after replacing files
           echo "Current working directory after replacing files:"
