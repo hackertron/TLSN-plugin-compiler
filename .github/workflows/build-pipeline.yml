@@ -66,7 +66,7 @@ jobs:
           ls -la
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: wasm-artifact
           path: ./dist/*.wasm
