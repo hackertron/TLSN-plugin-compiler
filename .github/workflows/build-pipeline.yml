@@ -28,23 +28,23 @@ jobs:
         if: github.event.client_payload != null
         run: |
           # Replace config.json
-          echo "${{ github.event.client_payload['config.json'] }}" > config.json
+          printf "%s" "${{ github.event.client_payload['config.json'] }}" > config.json
           echo "Replaced config.json:"
           cat config.json
 
           # Replace index.d.ts
-          echo "${{ github.event.client_payload['index.d.ts'] }}" > src/index.d.ts
+          printf "%s" "${{ github.event.client_payload['index.d.ts'] }}" > src/index.d.ts
           echo "Replaced src/index.d.ts:"
           cat src/index.d.ts
 
           # Replace index.ts
-          echo "${{ github.event.client_payload['index.ts'] }}" > src/index.ts
+          printf "%s" "${{ github.event.client_payload['index.ts'] }}" > src/index.ts
           echo "Replaced src/index.ts:"
           cat src/index.ts
 
           # Replace utils/hf.js
           mkdir -p src/utils
-          echo "${{ github.event.client_payload['utils/hf.js'] }}" > src/utils/hf.js
+          printf "%s" "${{ github.event.client_payload['utils/hf.js'] }}" > src/utils/hf.js
           echo "Replaced src/utils/hf.js:"
           cat src/utils/hf.js
 
@@ -67,6 +67,8 @@ jobs:
           npm install
           npm run build
           echo "Build complete."
+          echo "Contents of src/index.ts (post-build):"
+          cat src/index.ts
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
