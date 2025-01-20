@@ -27,21 +27,23 @@ jobs:
       - name: Replace files with incoming payload
         if: github.event.client_payload != null
         run: |
+          # Ensure directories exist
+          mkdir -p src/utils
+
           # Replace config.json
-          echo '${{ toJSON(github.event.client_payload["config.json"]) }}' | base64 -d > config.json
+          echo "${{ github.event.client_payload['config.json'] }}" | base64 -d > config.json
           echo "Replaced config.json:"
           cat config.json
 
           # Replace index.d.ts
-          echo '${{ toJSON(github.event.client_payload["index.d.ts"]) }}' | base64 -d > src/index.d.ts
+          echo "${{ github.event.client_payload['index.d.ts'] }}" | base64 -d > src/index.d.ts
           echo "Replaced src/index.d.ts:"
           cat src/index.d.ts
 
           # Replace index.ts
-          echo '${{ toJSON(github.event.client_payload["index.ts"]) }}' | base64 -d > src/index.ts
+          echo "${{ github.event.client_payload['index.ts'] }}" | base64 -d > src/index.ts
           echo "Replaced src/index.ts:"
           cat src/index.ts
-
 
           # Debugging: Show updated directory structure
           echo "Directory structure after replacing files:"
